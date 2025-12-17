@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>PompushkaShcool</title>
+      <link rel="icon" type="image/x-icon" href="ico.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <h1>Школьный справочник "PompushkaShcool"</h1>
+  <p>Разработчик: Муратов Михаил</p>
+  <input type="text" id="searchBox" placeholder="Поиск...">
+  <div id="searchResults"></div>
+  <button id="openChatBtn" style="margin-top: 10px;">🤖 Спросить нейросеть</button>
+  <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 8px;">
+    <button id="helpBtn" title="Как пользоваться">?</button>
+    <button id="settingsBtn" title="Настройки">⚙️</button>
+  </div>
+</header>
+
+  <main>
+    <h2 id="ruleTitle">Правило</h2>
+    <div id="ruleContent">
+      <!-- Содержимое правила будет загружено через JS -->
+    </div>
+  </main>
+
+  <footer>
+    <a href="#" id="backToGroup">&larr; Назад к правилам</a>
+  </footer>
+
+  <!-- Подключение всех данных -->
+  <script src="data/russian_data.js"></script>
+  <script src="data/math_data.js"></script>
+  <script src="data/english_data.js"></script>
+  <script src="data/history_data.js"></script>
+  <script src="data/biology_data.js"></script>
+  <script src="data/chemistry_data.js"></script>
+  <script src="data/physics_data.js"></script>
+  <script src="data/literature_data.js"></script>
+  <script src="data/geography_data.js"></script>
+  <script src="data/informatics_data.js"></script>
+  <script src="all_data.js"></script>
+  <script src="script.js"></script>
+  <script>
+    window.addEventListener('load', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const ruleId = urlParams.get('id');
+
+      // Получаем subjectId и groupId через функции
+      const subjectId = getSubjectByRuleId(ruleId);
+      const groupId = getGroupByRuleId(ruleId);
+
+      // Устанавливаем ссылку "Назад"
+      if (subjectId && groupId) {
+        document.getElementById('backToGroup').href = `group.html?subj=${subjectId}&group=${groupId}`;
+      } else {
+        document.getElementById('backToGroup').href = 'index.html';
+      }
+
+      // Загружаем правило
+      loadRule(ruleId);
+    });
+  </script>
+
+  <p>Если есть вопросы, пожелания или найдена ошибка, прошу обращаться сюда: Telegram - @Misha_x123</p>
+    <p>©Pompushka Games Studio совместно с нейросетью Qwen</p>
+
+<div id="chatModal" class="chat-modal">
+  <div class="chat-window">
+    <div class="chat-header">
+      <span>🤖 Нейросеть "PompuwkaAI"</span>
+      <div class="chat-header-buttons">
+        <button id="clearChatBtn" class="close-btn" title="Очистить чат">🗑</button>
+        <button id="closeChatBtn" class="close-btn" title="Закрыть">×</button>
+      </div>
+    </div>
+    <div id="chatMessages" class="chat-messages">
+      <div class="message bot-message">
+        Привет! Я — PompuwkaAI. Задай мне любой вопрос по школьным предметам, и я постараюсь ответить!
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="userInput" placeholder="Введите ваш вопрос..." />
+      <button id="sendMsgBtn">Отправить</button>
+    </div>
+  </div>
+</div>
+<!-- Всплывающее окно настроек -->
+<div id="settingsModal" class="settings-modal">
+  <div class="settings-window">
+    <div class="settings-header">
+      <span>⚙️ Настройки</span>
+      <button id="closeSettingsBtn" class="close-btn">&times;</button>
+    </div>
+    <div class="settings-content">
+      <h3>Тема</h3>
+      <button id="themeToggleInModal">🌙 Ночная тема</button>
+
+      <h3>Цвет шапки</h3>
+      <div class="settings-color-grid">
+        <button data-color-header="#4CAF50">🟢</button>
+        <button data-color-header="#F44336">🔴</button>
+        <button data-color-header="#FF9800">🟠</button>
+        <button data-color-header="#2196F3">🔵</button>
+        <button data-color-header="#00BCD4">🔷</button>
+        <button data-color-header="#E91E63">🌸</button>
+        <button data-color-header="#FFEB3B">🟡</button>
+      </div>
+
+      <h3>Цвет кнопок</h3>
+      <div class="settings-color-grid">
+        <button data-color-button="#4CAF50">🟢</button>
+        <button data-color-button="#F44336">🔴</button>
+        <button data-color-button="#FF9800">🟠</button>
+        <button data-color-button="#2196F3">🔵</button>
+        <button data-color-button="#00BCD4">🔷</button>
+        <button data-color-button="#E91E63">🌸</button>
+        <button data-color-button="#000000">⚫</button>
+        <button data-color-button="#FFFFFF">⚪</button>
+        <button data-color-button="#FFEB3B">🟡</button>
+      </div>
+      <div style="margin-top: 20px;">
+        <button id="resetSettingsBtn">🔄 Сбросить настройки</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Всплывающее окно помощи -->
+<div id="helpModal" class="help-modal">
+  <div class="help-window">
+    <div class="help-header">
+      <span>❓ Как пользоваться</span>
+      <button id="closeHelpBtn" class="close-btn">&times;</button>
+    </div>
+    <div class="help-content">
+      <p>Добро пожаловать в Pompushkashcool!</p>
+      <ul>
+        <li>Нажмите на предмет, чтобы перейти к разделам.</li>
+        <li>Используйте поиск для быстрого доступа к правилам.</li>
+        <li>Спросите нейросеть, если что-то непонятно.</li>
+        <li>Настройте внешний вид сайта в меню настроек.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>
